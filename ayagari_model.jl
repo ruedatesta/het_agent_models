@@ -221,4 +221,4 @@ legend=false,
 title="Wealth Distribution",
 dpi=300
 )
-savefig("wealth.png")
+#savefig("wealth.png")
