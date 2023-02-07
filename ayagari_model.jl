@@ -186,8 +186,8 @@ end
 a_min = 0;
 #a_max = 1000;
 a_max=347.54080382909143
-a_size = 500;
-#a_size = 150;
+#a_size = 500;
+a_size = 150;
 ρ = 0.975;
 σ = 0.7;
 y_size = 7;
@@ -214,7 +214,7 @@ end
 (r,D,A,pdf,a_grid)=ayagari();
 end
 
-plot(a_grid[100:475],pdf[100:475],
+plot(a_grid[2:140],pdf[2:140],
 linewidth = 3,
 color=:red,
 legend=false,
