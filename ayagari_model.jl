@@ -184,10 +184,10 @@ end
 ## Now, let's use specific parameters
 
 a_min = 0;
-#a_max = 1000;
-a_max=347.54080382909143
-#a_size = 500;
-a_size = 150;
+a_max = 1000;
+#a_max=347.54080382909143
+a_size = 500;
+#a_size = 150;
 ρ = 0.975;
 σ = 0.7;
 y_size = 7;
@@ -206,19 +206,30 @@ function ayagari()
     A = sum(D.*a);
     pdf=transpose(sum(D, dims=1))
 
-    return r,D,A,pdf,a_grid
+    return r,D,A,pdf,a_grid,a,c
 
 end
 
 @time begin
-(r,D,A,pdf,a_grid)=ayagari();
+(r,D,A,pdf,a_grid,a,c)=ayagari();
 end
 
-plot(a_grid[2:140],pdf[2:140],
+## PDF
+plot(a_grid[50:450],pdf[50:450],
 linewidth = 3,
 color=:red,
+linestyle=:solid,
 legend=false,
 title="Wealth Distribution",
-dpi=300
+dpi=300,
+xlabel="Assets"
 )
 #savefig("wealth.png")
+
+## Policy functions
+p=plot(a_grid[1:60],c[1,1:60])
+for s=2:4
+    plot!(p,a_grid[1:60],c[s,1:60])
+
+end
+plot!(p,xlabel="Assets",ylabel="Consumption")
