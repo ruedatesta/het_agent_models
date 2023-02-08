@@ -6,7 +6,8 @@ This is my personal repository, where I store codes for solving some popular het
 
 The codes are mostly based on the [NBER's Heterogeneous-Agent Macro Workshop](https://www.nber.org/conferences/heterogeneous-agent-macro-workshop-spring-2022), originally written in Python.
 
-The repository includes solving the following models
+The repository includes the following models
 - Ayagari (1995)
 - Hopenhayn (1992)
-- Krusell-Smith
+- Krusell-Smith (1998)
+- HANK
