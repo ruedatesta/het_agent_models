@@ -112,7 +112,7 @@ function get_lottery(a, a_grid)
     for i in 1:size(a,1)
         for j in 1:size(a,2)
             if a_i[i,j] == 0;
-                a_π[i,j] = 1.0;
+                a_π[i,j] = 1.0; # This is because the index 0 doesn't exist in julia and because 0 is a point on the grid
             else
                 a_π[i,j] = (a_grid[a_i[i,j]+1] - a[i,j])/(a_grid[a_i[i,j]+1] - a_grid[a_i[i,j]]);
             end
@@ -123,7 +123,7 @@ function get_lottery(a, a_grid)
 end
 
 function forward_policy(D, a_i, a_π)
-    a_i = max.(1,a_i);
+    a_i = max.(1,a_i); # We need a 1 in the very fist a_i, because is 0.
     Dend = zeros(size(a_i,1),size(a_i,2));
     for s in 1:size(a_i,1)
         for a in 1:size(a_i,2)
@@ -175,29 +175,13 @@ function disequilibrium(r, a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ
     return(disequ)
 end
 
-function r_equ(a_min=0, a_max=10_000, a_size=500, ρ=0.975, σ=0.7, y_size=7, β=0.98, eis=1.0, α=0.36, δ=0.08)
-    res = optimize(r -> disequilibrium(r, a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ), -0.9999*δ, 0.9999*(1/β - 1), rel_tol = 1e-8);
+function r_equ(a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ)
+    res = optimize(r -> disequilibrium(r, a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ), -δ+0.00001, (1/β - 1-0.0001), rel_tol = 1e-8);
     r_equ = Optim.minimizer(res);
     return(r_equ)
 end
 
-## Now, let's use specific parameters
-
-a_min = 0;
-a_max = 1000;
-#a_max=347.54080382909143
-a_size = 500;
-#a_size = 150;
-ρ = 0.975;
-σ = 0.7;
-y_size = 7;
-β = 0.98;
-eis = 1;
-α = 0.36;
-δ = 0.08;
-
-
-function ayagari()
+function ayagari(a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ)
     r= r_equ(a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ);
     a_grid = discretize_assets(a_min, a_max, a_size);
     (y, π, Π) = discretize_income(ρ,σ,y_size);
@@ -210,26 +194,74 @@ function ayagari()
 
 end
 
+## Now, let's use specific parameters
+# original values
+#=
+a_min = 0;
+a_max = 1000; # Here is the problem
+#a_max=347.54080382909143
+a_size = 350;
+#a_size = 150;
+ρ = 0.975;
+σ = 0.7;
+y_size = 7;
+β = 0.98;
+eis = 1;
+α = 0.36;
+δ = 0.08;
+=#
+
+# New parameters
+#=
+a_min = 0;
+a_max = 1000;
+#a_max=347.54080382909143
+a_size = 40;
+#a_size = 150;
+ρ = 0.32;
+σ = 0.2;
+y_size = 5;
+β = 0.95;
+eis = 0.5;
+α = 0.4;
+δ = 0.1;
+=#
+#Ayagari parameters
+a_min = 0;
+a_max = 1000;
+#a_max=347.54080382909143
+a_size = 350;
+#a_size = 150;
+ρ = 0.9;
+σ = 0.2;
+y_size = 7;
+β = 0.96;
+eis = 1/2;
+α = 1/3;
+δ = 0.08;
 @time begin
-(r,D,A,pdf,a_grid,a,c)=ayagari();
+(r,D,A,pdf,a_grid,a,c)=ayagari(a_min, a_max, a_size, ρ, σ, y_size, β, eis, α, δ);
 end
 
 ## PDF
-plot(a_grid[50:450],pdf[50:450],
+min_axis=Int(a_size*0.1);
+max_axis=Int(a_size*0.9);
+plot(a_grid[min_axis:max_axis],pdf[min_axis:max_axis],
 linewidth = 3,
 color=:red,
 linestyle=:solid,
 legend=false,
-title="Wealth Distribution",
+title="Wealth distribution",
 dpi=300,
 xlabel="Assets"
 )
 #savefig("wealth.png")
 
-## Policy functions
-p=plot(a_grid[1:60],c[1,1:60])
+## Policy functionsa
+min_axis2=
+p=plot(a_grid[1:40],c[1,1:40])
 for s=2:4
-    plot!(p,a_grid[1:60],c[s,1:60])
+    plot!(p,a_grid[1:40],c[s,1:40])
 
 end
 plot!(p,xlabel="Assets",ylabel="Consumption")
